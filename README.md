@@ -74,3 +74,4 @@ pnpm dev
 - [**Typescript**](https://www.typescriptlang.org/) - JavaScript with syntax for types.
 - [**Tailwind CSS**](https://tailwindcss.com/) - A utility-first CSS framework for rapidly building custom designs.
 - [**daisyUI**](https://daisyui.com/) - Adds component class names to Tailwind CSS so you can make beautiful websites faster than ever.
+- [**@midudev/tailwind-animations**](https://tailwindcss-animations.vercel.app) - Easy peasy animations for your Tailwind project.
