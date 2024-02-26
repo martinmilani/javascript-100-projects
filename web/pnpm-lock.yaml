@@ -11,6 +11,9 @@ dependencies:
   '@astrojs/tailwind':
     specifier: ^5.1.0
     version: 5.1.0(astro@4.4.4)(tailwindcss@3.4.1)
+  '@midudev/tailwind-animations':
+    specifier: ^0.0.7
+    version: 0.0.7(tailwindcss@3.4.1)
   astro:
     specifier: ^4.4.4
     version: 4.4.4(typescript@5.3.3)
@@ -657,6 +660,14 @@ packages:
 
   /@medv/finder@3.1.0:
     resolution: {integrity: sha512-ojkXjR3K0Zz3jnCR80tqPL+0yvbZk/lEodb6RIVjLz7W8RVA2wrw8ym/CzCpXO9SYVUIKHFUpc7jvf8UKfIM3w==}
+    dev: false
+
+  /@midudev/tailwind-animations@0.0.7(tailwindcss@3.4.1):
+    resolution: {integrity: sha512-K897X4NvM3tV2/R7aCjl6gJ6msWSTqQtcAwb5VX5D5+m/Mo650mEFoeODwqzaePYNro5BTGyXXFQw/kiHBZlUA==}
+    peerDependencies:
+      tailwindcss: ^3.0.0
+    dependencies:
+      tailwindcss: 3.4.1
     dev: false
 
   /@nodelib/fs.scandir@2.1.5:
