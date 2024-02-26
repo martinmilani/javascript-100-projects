@@ -1,6 +1,5 @@
 ---
 import { PROJECTS } from "../const";
-// import InfoProject from "../components/InfoProject.astro"
 import Layout from "../layouts/Layout.astro";
 
 export function getStaticPaths() {
@@ -17,12 +16,10 @@ const { project } = Astro.params;
 const index = PROJECTS.findIndex((p) => p.slug === project);
 const info = PROJECTS[index];
 const number = `${index + 1}`.padStart(2, "0");
-
-console.log(project);
 ---
 
 <Layout title={`Proyecto de JavaScript - ${number}: ${info.title}`}>
-  <iframe class="w-screen h-dvh" src={`/projects/${project}/index.html`}
-  ></iframe>
-  <!-- <InfoProject info={{ ...info, number }} /> -->
+  <iframe
+    style={{ width: "100vw", height: "100dvh" }}
+    src={`/projects/${project}/index.html`}></iframe>
 </Layout>
