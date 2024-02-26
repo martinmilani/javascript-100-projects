@@ -23,7 +23,7 @@
         border: 4px solid #676a86;
         border-style: dashed;
         border-bottom: transparent;
-        background: url("./bkg.png") repeat;
+        /* background: url("./bkg.png") repeat; */
         margin: 0 auto;
         display: block;
         border-top-left-radius: 8px;
@@ -49,7 +49,7 @@
     const gameOverAudio = new Audio("Arkanoid SFX (10).wav");
 
     canvas.width = 450;
-    canvas.height = 500;
+    canvas.height = 480;
 
     // Game variables
     let lastTime = 0;
@@ -57,7 +57,7 @@
     let gameOver = false;
     let gamePause = true;
     let playerWin = false;
-    let sound = true;
+    let sound = false;
 
     // Title variables
     let blinkCounter = 0;
@@ -65,6 +65,11 @@
     const titleHeight = 43;
     const titleSpriteX = 5;
     const titleSpriteY = 10;
+
+    const brandWidth = 95;
+    const brandHeight = 28;
+    const brandSpriteX = 328;
+    const brandSpriteY = 64;
 
     // Game Over variables
     const gameOverWidth = 140;
@@ -207,6 +212,7 @@
 
           const clipX = currentBrick.color * brickWidth;
 
+          canvas.style.background = 'url(./bkg.png)';
           ctx.drawImage(
             $bricks, // Image
             clipX, // Source X: Coordenadas de recorte
@@ -265,16 +271,29 @@
     }
 
     function drawTitle() {
+      canvas.style.background = 'black';
       ctx.drawImage(
         $sprite, // Image
         titleSpriteX,
         titleSpriteY,
         titleWidth,
         titleHeight,
-        canvas.width / 2 - titleWidth / 2,
-        18,
-        titleWidth,
-        titleHeight
+        canvas.width / 2 - 180,
+        100,
+        360,
+        60
+      );
+
+      ctx.drawImage(
+        $sprite, // Image
+        brandSpriteX,
+        brandSpriteY,
+        brandWidth,
+        brandHeight,
+        canvas.width / 2 - 100,
+        canvas.height - 80,
+        200,
+        60
       );
 
       blinkCounter++;
@@ -290,12 +309,12 @@
         ctx.fillText(
           "Press space to start !",
           canvas.width / 2,
-          canvas.height / 2 + 60
+          canvas.height - 160
         );
         ctx.fillText(
           "Press 'S' to toggle sound",
           canvas.width / 2,
-          canvas.height / 2 + 90
+          canvas.height - 120
         );
       }
 
@@ -459,21 +478,30 @@
     }
 
     function draw() {
-      checkGameWin();
       cleanCanvas();
-      drawScore();
-      drawSoundToggle();
-      drawLives();
-      drawBall();
-      drawPaddle();
-      drawBricks();
-
       if (gamePause) drawTitle();
-      if (gameOver) drawGameOver();
 
-      collosionDetection();
-      paddleMovement();
-      ballMovement();
+      if (!gamePause &&!gameOver) {
+        checkGameWin();
+        drawScore();
+        drawSoundToggle();
+        drawLives();
+        drawBall();
+        drawPaddle();
+        drawBricks();
+        collosionDetection();
+        paddleMovement();
+        ballMovement();
+      }
+
+      if (gameOver) {
+        drawGameOver()
+        drawScore();
+        drawSoundToggle();
+        drawLives();
+        drawPaddle();
+        drawBricks();
+      };
 
       window.requestAnimationFrame(draw);
     }
