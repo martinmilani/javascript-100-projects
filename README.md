@@ -1,6 +1,8 @@
 <div align="center">
   <h1>
-    <strong>100 JavaScript Projects</strong>
+    <a href="https://javascript-100-projects.vercel.app/" target="_blank">  
+      <strong>100 JavaScript Projects</strong>
+    </a>
   </h3>
 </div>
 
