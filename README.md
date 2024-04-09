@@ -16,15 +16,16 @@
 
 <div align="center">
 
-| #| Project| Description|
-|---|---|---|
-| 1| **tinder-swipe**| Tinder swipe effect with HTML, CSS, and JavaScript.|
-| 2| **arkanoid-game**| Classic and mythical Arkanoid game to control with the keyboard.|                                                
+| #   | Project           | Description                                                      |
+| --- | ----------------- | ---------------------------------------------------------------- |
+| 1   | **tinder-swipe**  | Tinder swipe effect with HTML, CSS, and JavaScript.              |
+| 2   | **arkanoid-game** | Classic and mythical Arkanoid game to control with the keyboard. |
+| 3   | **typing-game**   | Typing game with HTML, CSS, and JavaScript to test your speed.   |
 
 </div>
 
-
 ### **Introduction**
+
 To clone the repository to your local machine:
 
 ```bash
@@ -41,7 +42,6 @@ cd 01-tinder-swipe
 2. Install extension [**Live Preview**](https://marketplace.visualstudio.com/items?itemName=ms-vscode.live-server) on Visual Studio Code.
 
 3. Press `F1` and select `Live Preview: Start Server`.
-
 
 ### **Web Site**
 

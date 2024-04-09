@@ -33,18 +33,18 @@ import { PROJECTS } from "../const";
 
               <p class="">{project.description}</p>
 
-              <ul class="card-actions justify-end my-4">
+              <ul class="card-actions justify-start my-4">
                 {project.learnings.map((learning) => (
                   <li class="badge badge-neutral text-xs">{learning}</li>
                 ))}
               </ul>
 
-              <div class="card-actions flex-row flex-nowrap items-center justify-center">
+              <div class="card-actions flex-row flex-nowrap items-center justify-end mt-4">
                 <a
                   role="button"
                   target="_blank"
                   href={`/${project.slug}`}
-                  class="btn btn-outline btn-primary w-1/2"
+                  class="btn btn-outline btn-primary btn-sm"
                 >
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
@@ -72,7 +72,7 @@ import { PROJECTS } from "../const";
                 <a
                   role="button"
                   target="_blank"
-                  class="btn btn-outline btn-primary w-1/2"
+                  class="btn btn-outline btn-primary btn-sm"
                   href={`https://github.com/martinmilani/javascript-100-projects/tree/main/${project.slug}`}
                 >
                   <svg
