@@ -1,0 +1,576 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Donkeytype 🐴 - A Monkeytype Clone</title>
+  </head>
+  <style>
+    :root {
+      color-scheme: light dark;
+      --green: #00b755;
+      --yellow: #e2b714;
+      --red: #ca4754;
+      --black: #222;
+      --gray: #646669;
+      --white: #d1d0c5;
+      --background: #323437;
+    }
+
+    body {
+      background: var(--background);
+      font-family: "Cascadia Mono", monospace;
+      display: grid;
+      justify-content: center;
+      padding: 16px;
+      margin-top: 32px;
+    }
+
+    .title {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 4px;
+      color: var(--yellow);
+      margin: 0 auto;
+
+      h1 {
+        cursor: default;
+      }
+    }
+
+    section {
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      max-width: 900px;
+      font-size: 1.5em;
+
+      .options-container {
+        border-radius: 10px;
+        border: none;
+        background-color: #64666925;
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        margin: 0 auto;
+        margin-bottom: 32px;
+        padding: 12px;
+        gap: 24px;
+        color: var(--white);
+
+        .options {
+          display: flex;
+          flex-direction: row;
+          justify-content: space-around;
+          gap: 32px;
+          font-size: medium;
+
+          label {
+            cursor: pointer;
+            color: var(--white);
+            opacity: 100%;
+            transition: color 0.2s ease-in-out;
+            transition: opacity 0.2s ease-in-out;
+
+            &:hover {
+              color: var(--yellow);
+              opacity: 70%;
+            }
+          }
+
+          :checked + label {
+            color: var(--yellow);
+          }
+
+          :disabled + label {
+            opacity: 70%;
+            cursor: not-allowed;
+            &:hover {
+              color: inherit;
+            }
+          }
+        }
+      }
+    }
+
+    time {
+      color: var(--yellow);
+    }
+
+    p {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 3px 8px;
+      margin: 0;
+    }
+
+    input {
+      z-index: -999;
+      position: absolute;
+      top: 0;
+      left: 0;
+      pointer-events: none;
+      opacity: 0;
+    }
+
+    letter {
+      color: var(--gray);
+      position: relative;
+
+      &.active::before {
+        content: "|";
+        color: var(--yellow);
+        position: absolute;
+        left: -60%;
+        animation: 1s blink infinite ease-in-out;
+      }
+
+      &.active.is-last::before {
+        left: 65%;
+      }
+
+      &.correct {
+        color: var(--white);
+      }
+
+      &.incorrect {
+        color: var(--red);
+      }
+    }
+
+    word {
+      text-decoration: underline transparent 2px;
+      transition: text-decoration 0.2s ease-in-out;
+
+      &.marked {
+        text-decoration-color: var(--red);
+      }
+    }
+
+    @keyframes blink {
+      0%,
+      25% {
+        opacity: 1;
+      }
+      75% {
+        opacity: 0;
+      }
+    }
+
+    #game,
+    #results {
+      animation-duration: 0.5s;
+      animation-fill-mode: forwards;
+    }
+
+    #game {
+      &.show {
+        animation-name: show;
+      }
+      &.hide {
+        animation-name: hide;
+      }
+    }
+
+    #results {
+      display: none;
+      align-items: center;
+
+      &.show {
+        animation-name: show;
+      }
+      &.hide {
+        animation-name: hide;
+      }
+
+      h2 {
+        font-size: 32px;
+        font-weight: 400;
+        color: var(--gray);
+        margin: 0;
+        padding: 0;
+      }
+
+      h3 {
+        font-size: 64px;
+        font-weight: 400;
+        color: var(--yellow);
+        margin: 0 0 4px 0;
+        padding: 0;
+        cursor: default;
+      }
+
+      p {
+        font-size: 16px;
+        font-weight: 400;
+        color: var(--gray);
+        margin: 0;
+        padding: 0;
+      }
+
+      button {
+        background-color: transparent;
+        border: none;
+        color: white;
+        margin-top: 20px;
+        padding: 16px;
+        opacity: 70%;
+        cursor: pointer;
+        width: fit-content;
+        border-radius: 12px;
+        transition: opacity 0.2s ease-in-out, scale 0.2s ease-in-out;
+
+        &:hover {
+          opacity: 100%;
+          scale: 1.2;
+        }
+      }
+    }
+
+    @keyframes show {
+      from {
+        display: none;
+        opacity: 0;
+      }
+      to {
+        display: flex;
+        opacity: 1;
+      }
+    }
+
+    @keyframes hide {
+      from {
+        display: flex;
+        opacity: 1;
+      }
+      to {
+        display: none;
+        opacity: 0;
+      }
+    }
+  </style>
+
+  <body>
+    <main>
+      <div class="title">
+        <svg
+          width="42"
+          height="42"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        >
+          <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+          <path
+            d="M2 6m0 2a2 2 0 0 1 2 -2h16a2 2 0 0 1 2 2v8a2 2 0 0 1 -2 2h-16a2 2 0 0 1 -2 -2z"
+          />
+          <path d="M6 10l0 .01" />
+          <path d="M10 10l0 .01" />
+          <path d="M14 10l0 .01" />
+          <path d="M18 10l0 .01" />
+          <path d="M6 14l0 .01" />
+          <path d="M18 14l0 .01" />
+          <path d="M10 14l4 .01" />
+        </svg>
+        <h1>donkeytype</h1>
+      </div>
+      <section id="game">
+        <div class="options-container">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="24"
+            height="24"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            class="icon icon-tabler icons-tabler-outline icon-tabler-clock"
+          >
+            <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+            <path d="M3 12a9 9 0 1 0 18 0a9 9 0 0 0 -18 0" />
+            <path d="M12 7v5l3 3" />
+          </svg>
+          <div class="options">
+            <div>
+              <input type="radio" id="15s" name="time-options" value="15" />
+              <label for="15s">15s</label>
+            </div>
+            <div>
+              <input
+                type="radio"
+                id="30s"
+                name="time-options"
+                value="30"
+                checked
+              />
+              <label for="30s">30s</label>
+            </div>
+            <div>
+              <input type="radio" id="60s" name="time-options" value="60" />
+              <label for="60s">60s</label>
+            </div>
+          </div>
+        </div>
+        <time></time>
+        <p></p>
+        <input type="text" id="input-text" autofocus autocomplete="off" />
+      </section>
+      <section id="results">
+        <h2>time</h2>
+        <h3 id="test-time"></h3>
+        <h2>wpm</h2>
+        <h3 id="wpm"></h3>
+        <h2>accuracy</h2>
+
+        <h3 id="accuracy"></h3>
+
+        <h2>characters</h2>
+        <p>(correct/incorrects)</p>
+        <h3 id="characters"></h3>
+
+        <button id="reload-button">
+          <svg
+            width="24"
+            height="24"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          >
+            <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+            <path d="M20 11a8.1 8.1 0 0 0 -15.5 -2m-.5 -4v4h4" />
+            <path d="M4 13a8.1 8.1 0 0 0 15.5 2m.5 4v-4h-4" />
+          </svg>
+        </button>
+      </section>
+    </main>
+  </body>
+  <script type="module">
+    import { words as INITIAL_WORDS } from "./data.js";
+
+    const $time = document.querySelector("time");
+    const $paragraph = document.querySelector("p");
+    const $input = document.querySelector("#input-text");
+    const $game = document.querySelector("#game");
+    const $results = document.querySelector("#results");
+    const $testTime = document.querySelector("#test-time");
+    const $wpm = document.querySelector("#wpm");
+    const $accuracy = document.querySelector("#accuracy");
+    const $characters = document.querySelector("#characters");
+    const $button = document.querySelector("#reload-button");
+
+    let initialTime = 30;
+    let isPaused = true;
+
+    let words = [];
+    let currentTime = initialTime;
+
+    initGame();
+    initEvents();
+
+    function initGame() {
+      $input.value = "";
+      $results.classList.remove("show");
+      $results.classList.add("hide");
+      setTimeout(() => {
+        $game.classList.remove("hide");
+        $game.classList.add("show");
+      }, 500);
+
+      words = INITIAL_WORDS.toSorted(() => Math.random() - 0.5).slice(0, 32);
+      currentTime = initialTime;
+
+      $time.textContent = `${initialTime}s`;
+
+      $paragraph.innerHTML = words
+        .map((word, index) => {
+          const letters = word.split("");
+          return `<word>
+          ${letters.map((letter) => `<letter>${letter}</letter>`).join("")}
+        </word>`;
+        })
+        .join("");
+
+      const $firstWord = $paragraph.querySelector("word");
+      $firstWord.classList.add("active");
+      $firstWord.querySelector("letter").classList.add("active");
+    }
+
+    function initEvents() {
+      document.addEventListener("keydown", () => {
+        $input.focus();
+      });
+      $input.addEventListener("keydown", onKeyDown);
+      $input.addEventListener("keyup", onKeyUp);
+      $button.addEventListener("click", initGame);
+
+      document
+        .querySelectorAll('input[name="time-options"]')
+        .forEach((radio) => {
+          radio.addEventListener("change", (e) => {
+            initialTime = parseInt(e.target.value);
+            $time.textContent = `${initialTime}s`;
+          });
+        });
+    }
+
+    function onKeyDown(e) {
+      const $currentWord = $paragraph.querySelector("word.active");
+      const $currentLetter = $currentWord.querySelector("letter.active");
+
+      const { key } = e;
+
+      if (key === "Backspace") {
+        const $prevWord = $currentWord.previousElementSibling;
+        const $prevLetter = $currentLetter.previousElementSibling;
+
+        if (!$prevWord && !$prevLetter) {
+          event.preventDefault();
+          return;
+        }
+
+        const $wordMarked = $paragraph.querySelector("word.marked");
+        if ($wordMarked && !$prevLetter) {
+          event.preventDefault();
+          $prevWord.classList.remove("marked");
+          $prevWord.classList.add("active");
+
+          const $letterToGo = $prevWord.querySelector("letter:last-child");
+
+          $currentWord.classList.remove("active");
+          $currentLetter.classList.remove("active");
+          $letterToGo.classList.add("active");
+
+          $input.value = [
+            ...$prevWord.querySelectorAll("letter.correct, letter.incorrect"),
+          ]
+            .map(($el) => {
+              return $el.classList.contains("correct") ? $el.innerText : "*";
+            })
+            .join("");
+        }
+      }
+    }
+
+    function onKeyUp(e) {
+      const $currentWord = $paragraph.querySelector("word.active");
+      const $currentLetter = $currentWord.querySelector("letter.active");
+
+      const { key } = e;
+
+      if (isPaused) {
+        isPaused = false;
+        const intervalId = setInterval(() => {
+          currentTime--;
+          $time.textContent = `${currentTime}s`;
+          if (currentTime === 0) {
+            clearInterval(intervalId);
+            gameOver();
+          }
+        }, 1000);
+
+        document
+          .querySelectorAll('input[name="time-options"]')
+          .forEach((radio) => {
+            radio.setAttribute("disabled", true);
+          });
+      }
+
+      if (key === " ") {
+        e.preventDefault();
+
+        const $nextWord = $currentWord.nextElementSibling;
+        const $nextLetter = $nextWord.querySelector("letter");
+
+        $currentWord.classList.remove("active", "marked");
+        $currentLetter.classList.remove("active");
+
+        $nextWord.classList.add("active");
+        $nextLetter.classList.add("active");
+
+        $input.value = "";
+
+        const hasMissedLetters =
+          $currentWord.querySelectorAll("letter:not(.correct)").length > 0;
+
+        const classToAdd = hasMissedLetters ? "marked" : "correct";
+        $currentWord.classList.add(classToAdd);
+      } else {
+        const currentWord = $currentWord.innerText.trim();
+        $input.maxLength = currentWord.length;
+
+        const $allLetters = $currentWord.querySelectorAll("letter");
+
+        $allLetters.forEach(($letter) => {
+          $letter.classList.remove("correct", "incorrect");
+        });
+
+        $input.value.split("").forEach((char, index) => {
+          const $letter = $allLetters[index];
+          const letterToCheck = currentWord[index];
+
+          const isCorrect = char === letterToCheck;
+          const letterClass = isCorrect ? "correct" : "incorrect";
+          $letter.classList.add(letterClass);
+        });
+
+        $currentLetter.classList.remove("active", "is-last");
+        const inputLength = $input.value.length;
+        const $nextActiveLetter = $allLetters[inputLength];
+
+        if ($nextActiveLetter) {
+          $nextActiveLetter.classList.add("active");
+        } else {
+          $currentLetter.classList.add("active", "is-last");
+        }
+      }
+    }
+
+    function gameOver() {
+      $game.classList.remove("show");
+      $game.classList.add("hide");
+      setTimeout(() => {
+        $results.style.display = "flex";
+        $results.classList.remove("hide");
+        $results.classList.add("show");
+      }, 500);
+
+      isPaused = true;
+
+      const correctWords = $paragraph.querySelectorAll("word.correct").length;
+      const incorrectWords =
+        $paragraph.querySelectorAll("word.incorrect").length;
+      const missedLetters = $paragraph.querySelectorAll("letter:not(.correct)");
+      const correctLetters =
+        $paragraph.querySelectorAll("letter.correct").length;
+      const incorrectLetters =
+        $paragraph.querySelectorAll("letter.incorrect").length;
+
+      const totalLeters = correctLetters + incorrectLetters;
+      const totalWords = correctWords + incorrectWords;
+
+      const accuracy =
+        totalLeters > 0 ? (correctLetters / totalLeters) * 100 : 0;
+      const wpm = (correctWords * 60) / initialTime;
+      $testTime.textContent = `${initialTime}s`;
+      $wpm.textContent = wpm;
+      $accuracy.textContent = `${accuracy.toFixed(0)}%`;
+      $characters.textContent = `${correctLetters}/${incorrectLetters}`;
+
+      document
+        .querySelectorAll('input[name="time-options"]')
+        .forEach((radio) => {
+          radio.removeAttribute("disabled");
+        });
+    }
+  </script>
+</html>
