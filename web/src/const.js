@@ -24,7 +24,7 @@ export const PROJECTS = [
   },
   {
     slug: "03-typing-game",
-    title: "donkeytype",
+    title: "Typing Game",
     description: "Test your typing speed with this game",
     learnings: [
       "DOM",
